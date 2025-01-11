@@ -1,19 +1,5 @@
 from django.shortcuts import render
-from .forms import UserRegister
-
-# Главная страница
-def main_page(request):
-    return render(request, 'fourth_task/main.html')
-
-# Магазин
-def store_page(request):
-    games = ['Atomic Heart', 'Cyberpunk 2077', 'PayDay 2']
-    context = {'games': games}
-    return render(request, 'fourth_task/store.html', context)
-
-# Корзина
-def cart_page(request):
-    return render(request, 'fourth_task/cart.html')
+from myproject.task1.forms import UserRegister
 
 # Список уже существующих пользователей
 users = ["Vasya", "Petya", "Masha"]
@@ -29,22 +15,15 @@ def sign_up_by_django(request):
             repeat_password = form.cleaned_data['repeat_password']
             age = form.cleaned_data['age']
 
-            # Проверка на существующего пользователя
-            existing_users = Buyer.objects.all()  # QuerySet всех пользователей
-            if any(user.name == username for user in existing_users):
+            if username in users:
                 info['error'] = "Пользователь уже существует"
             elif password != repeat_password:
                 info['error'] = "Пароли не совпадают"
             elif age < 18:
                 info['error'] = "Вы должны быть старше 18"
             else:
-                # Добавление пользователя в базу данных
-                Buyer.objects.create(name=username, age=age, password=password)
-                return render(
-                    request,
-                    'fifth_task/registration_page.html',
-                    {'message': f"Приветствуем, {username}!"}
-                )
+                users.append(username)
+                return render(request, 'fifth_task/registration_page.html', {'message': f"Приветствуем, {username}!"})
         else:
             info['error'] = "Проверьте корректность данных"
     else:
@@ -73,13 +52,3 @@ def sign_up_by_html(request):
             return render(request, 'fifth_task/registration_page.html', {'message': f"Приветствуем, {username}!"})
 
     return render(request, 'fifth_task/registration_page.html', info)
-
-from .models import Game  # Подключаем модель Game
-
-def store_page(request):
-    # QuerySet для получения всех записей из таблицы Game
-    games = Game.objects.all()
-    context = {'games': games}
-    return render(request, 'fourth_task/store.html', context)
-
-

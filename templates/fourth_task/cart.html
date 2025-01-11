@@ -1,0 +1,8 @@
+{% extends 'menu.html' %}
+
+{% block pagename %}Корзина{% endblock %}
+
+{% block content %}
+<h1>Извините, ваша корзина пуста</h1>
+<a href="{% url 'main' %}">Вернуться обратно</a>
+{% endblock %}
