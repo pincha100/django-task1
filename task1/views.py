@@ -1,5 +1,9 @@
 from django.shortcuts import render
+from .models import Game  # Подключаем модель Game
 from .forms import UserRegister
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from .models import News
 
 # Главная страница
 def main_page(request):
@@ -74,7 +78,6 @@ def sign_up_by_html(request):
 
     return render(request, 'fifth_task/registration_page.html', info)
 
-from .models import Game  # Подключаем модель Game
 
 def store_page(request):
     # QuerySet для получения всех записей из таблицы Game
@@ -83,3 +86,12 @@ def store_page(request):
     return render(request, 'fourth_task/store.html', context)
 
 
+def news_view(request):
+    news_list = News.objects.all().order_by('-date')  # Сортируем по дате (сначала новые)
+    paginator = Paginator(news_list, 5)  # Показ 5 новостей на странице
+
+    page_number = request.GET.get('page')  # Получаем номер текущей страницы из параметров запроса
+    news = paginator.get_page(page_number)  # Получаем страницу
+
+    context = {'news': news}
+    return render(request, 'news.html', context)
